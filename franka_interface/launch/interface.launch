@@ -15,7 +15,7 @@
 
   <!-- Start the custom_franka_control_node for advertising controller services and starting custom controller manager-->
   <rosparam command="load" file="$(find franka_interface)/config/robot_config.yaml"/>
-  <param name="/robot_config/robot_ip" type="str" value="$(env FRANKA_ROBOT_IP)" />
+  <param name="/robot_config/robot_ip" type="str" value="172.16.0.2" />
   <node name="franka_control" pkg="franka_interface" type="custom_franka_control_node" output="screen" required="true" >
     <!-- <rosparam command="load" file="$(find franka_control)/config/custom_franka_control_node.yaml" /> -->
     <param name="robot_ip" value="172.16.0.2" />
@@ -56,7 +56,8 @@
                                            franka_ros_interface/joint_impedance_controller 
                                            franka_ros_interface/cartesian_impedance_controller
                                            franka_ros_interface/velocity_joint_velocity_controller
-                                           franka_ros_interface/position_joint_position_controller"/>
+					   franka_ros_interface/position_joint_position_controller
+					   franka_ros_interface/velocity_cartesian_damping_controller"/>
   </group>    
 
   <!-- Start rViz -->

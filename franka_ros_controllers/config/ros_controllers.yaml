@@ -20,6 +20,17 @@ velocity_joint_velocity_controller:
         - panda_joint6
         - panda_joint7
 
+velocity_cartesian_damping_controller:
+    type: franka_ros_controllers/VelocityCartesianDampingController
+    joint_names:
+        - panda_joint1
+        - panda_joint2
+        - panda_joint3
+        - panda_joint4
+        - panda_joint5
+        - panda_joint6
+        - panda_joint7
+
 
 effort_joint_impedance_controller:
     type: franka_ros_controllers/EffortJointImpedanceController

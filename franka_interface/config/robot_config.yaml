@@ -112,6 +112,7 @@ controllers_config:
     torque_controller: "franka_ros_interface/effort_joint_torque_controller"
     impedance_controller: "franka_ros_interface/effort_joint_impedane_controller"
     velocity_controller: "franka_ros_interface/velocity_joint_velocity_controller"
+    gcm_controller: "franka_ros_interface/velocity_cartesian_damping_controller"
     force_controller: "franka_ros_interface/force_controller"
     ntorque_controller: "franka_ros_interface/ntorque_controller"
     joint_impedance_controller: "franka_ros_interface/joint_impedance_controller"

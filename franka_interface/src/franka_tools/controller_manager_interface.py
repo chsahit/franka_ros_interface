@@ -193,6 +193,7 @@ class FrankaControllerManagerInterface(object):
             'joint_trajectory_controller': _get_controller_name_from_rosparam_server('/controllers_config/trajectory_controller'),
             'effort_joint_position_controller': _get_controller_name_from_rosparam_server('/controllers_config/impedance_controller'),
             'default_controller': _get_controller_name_from_rosparam_server('/controllers_config/default_controller'),
+            'gcm_controller': _get_controller_name_from_rosparam_server('controllers_config/gcm_controller'),
         }
 
 
@@ -575,6 +576,10 @@ class FrankaControllerManagerInterface(object):
     @property
     def cartesian_impedance_controller(self):
         return self._ns[1:] + "/cartesian_impedance_controller"
+
+    @property
+    def velocity_cartesian_damping_controller(self):
+        return self._ns[1:] + "/velocity_cartesian_damping_controller"
 
     '''
     @property
