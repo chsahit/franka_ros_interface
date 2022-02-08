@@ -615,6 +615,16 @@ class ArmInterface(object):
         self._command_msg.header.stamp = rospy.Time.now()
         self._joint_command_publisher.publish(self._command_msg)
 
+    def command_gcm(self, v):
+        if self._ctrl_manager.current_controller != "franka_ros_interface/velocity_cartesian_damping_controller":
+            self.switchToController("/franka_ros_interface/velocity_cartesian_damping_controller")
+        self._command_msg.names = self._joint_names
+        self._command_msg.mode = JointCommand.VELOCITY_MODE
+        self._command_msg.velocity = v
+        self._command_msg.header.stamp = rospy.Time.now()
+        self._joint_command_publisher.publish(self._command_msg)
+
+
     def set_joint_torques(self, torques):
         """
         Commands the joints of this limb with the specified torques.

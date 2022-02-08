@@ -227,7 +227,7 @@ bool MotionControllerInterface::switchControllers(int control_mode) {
         stop_controllers.push_back(gcm_controller_name_);
         break;
       case franka_core_msgs::JointCommand::VELOCITY_MODE:
-        start_controllers.push_back(velocity_controller_name_);
+        stop_controllers.push_back(velocity_controller_name_);
         stop_controllers.push_back(position_controller_name_);
         stop_controllers.push_back(impedance_controller_name_);
         stop_controllers.push_back(torque_controller_name_);
@@ -236,7 +236,7 @@ bool MotionControllerInterface::switchControllers(int control_mode) {
         stop_controllers.push_back(ntorque_controller_name_);
         stop_controllers.push_back(cartesian_impedance_controller_name_);
         stop_controllers.push_back(joint_impedance_controller_name_);
-        stop_controllers.push_back(gcm_controller_name_);
+        start_controllers.push_back(gcm_controller_name_);
         break;        
       default:
         ROS_ERROR_STREAM_NAMED("MotionControllerInterface", "Unknown JointCommand mode "

@@ -46,6 +46,7 @@
 #include <hardware_interface/robot_hw.h>
 #include <ros/node_handle.h>
 #include <ros/time.h>
+#include <Eigen/Dense>
 
 namespace franka_ros_controllers {
 
@@ -65,6 +66,7 @@ class VelocityCartesianDampingController : public controller_interface::MultiInt
   std::vector<hardware_interface::JointHandle> velocity_joint_handles_;
   std::unique_ptr<franka_hw::FrankaStateHandle> franka_state_handle_;
   std::unique_ptr<franka_hw::FrankaModelHandle> model_handle_;
+  std::array<double, 6> cartesian_target_{};
   std::array<double, 7> initial_vel_{};
   std::array<double, 7> prev_d_{};
   std::array<double, 7> vel_d_target_{};

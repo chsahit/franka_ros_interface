@@ -33,6 +33,7 @@
 #include <pluginlib/class_list_macros.h>
 #include <ros/ros.h>
 
+#include "pseudo_inversion.h"
 
 namespace franka_ros_controllers {
 
@@ -170,8 +171,26 @@ void VelocityCartesianDampingController::update(const ros::Time& time,
  
   franka::RobotState initial_state = franka_state_handle_->getRobotState();
   auto forces = initial_state.O_F_ext_hat_K;
-  ROS_INFO_STREAM("x force: " << forces[0]);
+  Eigen::Map<Eigen::Matrix<double, 6, 1>> forces_eigen(forces.data());
+  forces_eigen *= -1;
   std::array<double, 42> jacobian_array = model_handle_->getZeroJacobian(franka::Frame::kEndEffector);
+  Eigen::Map<Eigen::Matrix<double, 6, 7>> jacobian(jacobian_array.data());
+  // this should only be done one time in the callback
+  Eigen::Map<Eigen::Matrix<double, 6, 1>> cartesian_desired(cartesian_target_.data());
+  Eigen::Array<double, 6, 1> compliances;
+  compliances << 600.0, 600.0, 100.0, 600.0, 600.0, 600.0;
+  auto compliant_cartesian_desired = cartesian_desired + (compliances.cwiseInverse() * forces_eigen.array()).matrix();
+  /*if (cartesian_desired[2] > 0.03 || cartesian_desired[2] < -0.03) { 
+	  ROS_INFO_STREAM("proposed cartesian_vel " << compliant_cartesian_desired[0] << " " << compliant_cartesian_desired[1] << " " << compliant_cartesian_desired[2]);
+	  ROS_INFO_STREAM("z force: " << forces[2]);
+  }*/
+  Eigen::MatrixXd jacobian_pinv;
+  pseudoInverse(jacobian, jacobian_pinv);
+  auto vel_d_target_eigen_ = jacobian_pinv * compliant_cartesian_desired;
+  for (size_t i = 0; i < 7; ++i) {
+    vel_d_target_[i] = vel_d_target_eigen_[i];
+  }
+
   for (size_t i = 0; i < 7; ++i) {
     velocity_joint_handles_[i].setCommand(vel_d_[i]);
   }
@@ -216,26 +235,27 @@ bool VelocityCartesianDampingController::checkVelocityLimits(std::vector<double>
 void VelocityCartesianDampingController::jointVelCmdCallback(const franka_core_msgs::JointCommandConstPtr& msg) {
 
     if (msg->mode == franka_core_msgs::JointCommand::VELOCITY_MODE){
-      if (msg->velocity.size() != 7) {
+      if (msg->velocity.size() != 6) {
         ROS_ERROR_STREAM(
-            "VelocityCartesianDampingController: Published Commands are not of size 7");
+            "VelocityCartesianDampingController: Published Commands are not of size 6");
         vel_d_ = prev_d_;
         vel_d_target_ = prev_d_;
       }
+      /**
       else if (checkVelocityLimits(msg->velocity)) {
          ROS_ERROR_STREAM(
             "VelocityCartesianDampingController: Commanded velocities are beyond allowed velocity limits.");
         vel_d_ = prev_d_;
         vel_d_target_ = prev_d_;
 
-      }
+      }**/
       else
       {
-        std::copy_n(msg->velocity.begin(), 7, vel_d_target_.begin());
+        std::copy_n(msg->velocity.begin(), 6, cartesian_target_.begin());
+	ROS_INFO_STREAM("desired cartesian velocity x: " << cartesian_target_[0]);
       }
       
     }
-    // else ROS_ERROR_STREAM("VelocityCartesianDampingController: Published Command msg are not of JointCommand::Velocity! Dropping message");
 }
 
 void VelocityCartesianDampingController::jointControllerParamCallback(franka_ros_controllers::joint_controller_paramsConfig& config,
