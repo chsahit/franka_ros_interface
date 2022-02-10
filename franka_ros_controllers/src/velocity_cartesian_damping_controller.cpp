@@ -177,9 +177,8 @@ void VelocityCartesianDampingController::update(const ros::Time& time,
   Eigen::Map<Eigen::Matrix<double, 6, 7>> jacobian(jacobian_array.data());
   // this should only be done one time in the callback
   Eigen::Map<Eigen::Matrix<double, 6, 1>> cartesian_desired(cartesian_target_.data());
-  Eigen::Array<double, 6, 1> compliances;
-  compliances << 600.0, 600.0, 100.0, 600.0, 600.0, 600.0;
-  auto compliant_cartesian_desired = cartesian_desired + (compliances.cwiseInverse() * forces_eigen.array()).matrix();
+  Eigen::Map<Eigen::Array<double, 6, 1>> impedances(cartesian_impedance_.data());
+  auto compliant_cartesian_desired = cartesian_desired + (impedances.cwiseInverse() * forces_eigen.array()).matrix();
   /*if (cartesian_desired[2] > 0.03 || cartesian_desired[2] < -0.03) { 
 	  ROS_INFO_STREAM("proposed cartesian_vel " << compliant_cartesian_desired[0] << " " << compliant_cartesian_desired[1] << " " << compliant_cartesian_desired[2]);
 	  ROS_INFO_STREAM("z force: " << forces[2]);
@@ -252,7 +251,9 @@ void VelocityCartesianDampingController::jointVelCmdCallback(const franka_core_m
       else
       {
         std::copy_n(msg->velocity.begin(), 6, cartesian_target_.begin());
+	std::copy_n(msg->impedance.begin(), 6, cartesian_impedance_.begin());
 	ROS_INFO_STREAM("desired cartesian velocity x: " << cartesian_target_[0]);
+	ROS_INFO_STREAM("desired cartesian impedance x: " << cartesian_impedance_[0]);
       }
       
     }

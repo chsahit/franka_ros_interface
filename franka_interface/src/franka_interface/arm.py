@@ -39,7 +39,7 @@ import numpy as np
 from copy import deepcopy
 from rospy_message_converter import message_converter
 
-from franka_core_msgs.msg import JointCommand, RobotState, EndPointState, CartImpedanceStiffness, JointImpedanceStiffness, TorqueCmd, JICmd
+from franka_core_msgs.msg import JointCommand, RobotState, EndPointState, CartImpedanceStiffness, JointImpedanceStiffness, TorqueCmd, JICmd 
 from sensor_msgs.msg import JointState
 from std_msgs.msg import Float64
 from geometry_msgs.msg import PoseStamped, Wrench
@@ -615,12 +615,14 @@ class ArmInterface(object):
         self._command_msg.header.stamp = rospy.Time.now()
         self._joint_command_publisher.publish(self._command_msg)
 
-    def command_gcm(self, v):
+    def command_gcm(self, v, B):
         if self._ctrl_manager.current_controller != "franka_ros_interface/velocity_cartesian_damping_controller":
             self.switchToController("/franka_ros_interface/velocity_cartesian_damping_controller")
+
         self._command_msg.names = self._joint_names
         self._command_msg.mode = JointCommand.VELOCITY_MODE
         self._command_msg.velocity = v
+        self._command_msg.impedance = B
         self._command_msg.header.stamp = rospy.Time.now()
         self._joint_command_publisher.publish(self._command_msg)
 

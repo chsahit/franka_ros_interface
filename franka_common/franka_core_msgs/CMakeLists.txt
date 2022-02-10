@@ -15,6 +15,7 @@ find_package(catkin REQUIRED COMPONENTS
 add_message_files( DIRECTORY msg
         FILES
         JointCommand.msg
+	CompliantMotion.msg
         RobotState.msg
         EndPointState.msg
         JointLimits.msg

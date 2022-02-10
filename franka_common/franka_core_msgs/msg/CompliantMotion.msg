@@ -8,7 +8,7 @@ string[]  names        # Joint names order for command
 # Command fields required for a desired mode are listed in the comments
 float64[] position     # (radians)       Required for POSITION_MODE and IMPEDANCE_MODE
 float64[] velocity     # (radians/sec)   Required for VELOCITY_MODE and IMPEDANCE_MODE
-float64[] impedance 
+float64[] impedance    
 float64[] acceleration # (radians/sec^2) Required for                   
 float64[] effort       # (newton-meters) Required for TORQUE_MODE
 

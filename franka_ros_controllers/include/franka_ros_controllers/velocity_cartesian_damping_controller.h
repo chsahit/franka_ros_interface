@@ -67,6 +67,7 @@ class VelocityCartesianDampingController : public controller_interface::MultiInt
   std::unique_ptr<franka_hw::FrankaStateHandle> franka_state_handle_;
   std::unique_ptr<franka_hw::FrankaModelHandle> model_handle_;
   std::array<double, 6> cartesian_target_{};
+  std::array<double, 6> cartesian_impedance_{{1000.0, 1000.0, 1000.0, 1000.0, 1000.0, 1000.0}};
   std::array<double, 7> initial_vel_{};
   std::array<double, 7> prev_d_{};
   std::array<double, 7> vel_d_target_{};
